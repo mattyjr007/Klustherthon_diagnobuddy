@@ -1,4 +1,5 @@
 token.txt
-.ipynb_checkpoints
+.ipynb_checkpoints/
 .gitignore
 .env
+ __pycache__/
