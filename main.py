@@ -79,3 +79,20 @@ async def chatModel(user_input:str) -> dict:
     reponse_out = {"AI_out":response_msg}
 
     return reponse_out
+
+
+# Text Model
+@app.post("/api/langchainmodel/")
+async def langModel(user_input:str) -> dict:
+
+    # pass message to model
+    
+    try:
+        response_msg = model.chatBotLang(msg=user_input)
+    except:
+        response_msg = "Heyy!, there seems to be an issue please try again in fe mins!"
+
+    # store response in dictionary
+    reponse_out = {"AI_out":response_msg}
+
+    return reponse_out
