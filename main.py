@@ -72,8 +72,9 @@ async def chatModel(user_input:str) -> dict:
     
     try:
         response_msg = model.chatBot(msg=user_input)
-    except:
-        response_msg = "Heyy!, there seems to be an issue please try again in fe mins!"
+    except Exception as e:
+        print("Exception caught: ", e)
+        response_msg = "Heyy!, there seems to be an issue please try again in few secs!"
 
     # store response in dictionary
     reponse_out = {"AI_out":response_msg}
@@ -90,7 +91,7 @@ async def langModel(user_input:str) -> dict:
     try:
         response_msg = model.chatBotLang(msg=user_input)
     except:
-        response_msg = "Heyy!, there seems to be an issue please try again in fe mins!"
+        response_msg = "Heyy!, there seems to be an issue please try again in few secs!"
 
     # store response in dictionary
     reponse_out = {"AI_out":response_msg}
@@ -106,8 +107,9 @@ async def llamaModel(user_input:str) -> dict:
     
     try:
         response_msg = model.chatLlama2(message=user_input)
-    except:
-        response_msg = "Heyy!, there seems to be an issue please try again in few mins!"
+    except Exception as e:
+        print("Exception caught: ", e)
+        response_msg = "Heyy!, there seems to be an issue please try again in few secs!"
 
     # store response in dictionary
     reponse_out = {"AI_out":response_msg}
