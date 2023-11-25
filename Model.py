@@ -1,5 +1,6 @@
 import os
 from openai import OpenAI
+import replicate
 from dotenv.main import load_dotenv
 from langchain.chains import LLMChain
 from langchain.memory import ConversationBufferMemory
@@ -37,6 +38,8 @@ chatshistory.append({
       "role": "system",
       "content": instructions
     })
+
+messagesDb =  ""
 #-----------------------------------------
 
 # setup langchain and instructions
@@ -111,3 +114,43 @@ class Model:
             resp = "Hey there seems to be an issue please try again later!"    
 
         return resp
+    
+    #*******Llama2******
+    def chatLlama2(self, message:str) -> str:
+        global messagesDb
+        messagesDb +=  f"User: {message} \n\n"
+        output = replicate.run(
+        "meta/llama-2-7b-chat:13c3cdee13ee059ab779f0291d29054dab00a47dad8261375654de5540165fb0",
+        input={
+            "debug": False,
+            "top_k": -1,
+            "top_p": 1,
+            "prompt": messagesDb,
+            "temperature": 0.2,
+            "system_prompt":"""You are DiagnoBuddy, a medical assistant chatbot specializing in providing preliminary medical advice. Your primary role is to assist users in describing their symptoms, collect information step by step, and diagnose possible conditions based on their input. Your objective is to request as much relevant information as needed for a proper diagnosis, recommend home remedies when applicable, and guide users on when to seek professional medical care.
+        
+                                        Please respond in a concise and direct manner, simulating a human-like interaction. Ensure strict adherence to the bot's medical focus; do not entertain or respond to questions unrelated to health concerns. If a user attempts to divert the conversation to non-medical topics, politely inform them that DiagnoBuddy cannot assist with that information.
+                                        
+                                        Your key responsibilities include:
+                                        
+                                        Understanding and diagnosing user symptoms based on their descriptions.
+                                        Requesting additional information to clarify and enhance the accuracy of the diagnosis.
+                                        Recommending home remedies when appropriate.
+                                        Advising users on when they should seek in-person medical care or consult with a doctor.
+                                        Maintain a professional and helpful demeanor throughout the conversation. Periodically reinforce the bot's purpose to users to ensure they understand its limitations.
+                                        `perform a check on the user input, if it is not a medical concern, reply. sorry i cannot assist you with that.`
+                                        """,
+            "max_new_tokens": 800,
+            "min_new_tokens": -1,
+            "repetition_penalty": 1
+        }
+        )
+
+        full_response = ''
+        for item in output:
+            full_response += item
+
+        # store response
+        messagesDb += f"Assistant: {full_response} \n\n"
+        
+        return full_response
