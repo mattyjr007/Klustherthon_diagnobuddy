@@ -72,8 +72,8 @@ async def chatModel(user_input:str) -> dict:
     
     try:
         response_msg = model.chatBot(msg=user_input)
-    except Exception as e:
-        print("Exception caught: ", e)
+    except:
+        #print("Exception caught: ", e)
         response_msg = "Heyy!, there seems to be an issue please try again in few secs!"
 
     # store response in dictionary
