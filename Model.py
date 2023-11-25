@@ -33,19 +33,19 @@ Maintain a professional and helpful demeanor throughout the conversation. Period
 # openai model
 client = OpenAI(api_key=os.environ['GPT'])
 
+# temporary chat store for openai
 chatshistory = []
 chatshistory.append({
       "role": "system",
       "content": instructions
     })
-
+# temporary store for llama2
 messagesDb =  ""
 #-----------------------------------------
 
 # setup langchain and instructions
 llm = ChatOpenAI(api_key=os.environ['GPT'],temperature=0.34)
-
-# Prompt
+# Prompt template langchain
 promptLang = ChatPromptTemplate(
     messages=[
         SystemMessagePromptTemplate.from_template(instructions),
@@ -54,7 +54,6 @@ promptLang = ChatPromptTemplate(
         HumanMessagePromptTemplate.from_template("{question}"),
     ]
 )
-
 
 # create memory to store previous conversations
 memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
@@ -69,7 +68,7 @@ class Model:
 
     def __init__(self) -> None:
         pass
-
+    #*******OpenAI*******
     def chatBot(self,msg:str) -> str:
 
         # store conversation
