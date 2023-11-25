@@ -81,7 +81,7 @@ async def chatModel(user_input:str) -> dict:
     return reponse_out
 
 
-# Text Model
+# Lang Model
 @app.post("/api/langchainmodel/")
 async def langModel(user_input:str) -> dict:
 
@@ -91,6 +91,23 @@ async def langModel(user_input:str) -> dict:
         response_msg = model.chatBotLang(msg=user_input)
     except:
         response_msg = "Heyy!, there seems to be an issue please try again in fe mins!"
+
+    # store response in dictionary
+    reponse_out = {"AI_out":response_msg}
+
+    return reponse_out
+
+
+# Text Model
+@app.post("/api/llama2model/")
+async def llamaModel(user_input:str) -> dict:
+
+    # pass message to model
+    
+    try:
+        response_msg = model.chatLlama2(message=user_input)
+    except:
+        response_msg = "Heyy!, there seems to be an issue please try again in few mins!"
 
     # store response in dictionary
     reponse_out = {"AI_out":response_msg}
