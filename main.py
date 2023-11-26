@@ -5,7 +5,7 @@ from typing import Any
 from pydantic import BaseModel
 import uvicorn
 import os
-from Model import Model,SessionManager #, chatshistory
+from models import Model,SessionManager #, chatshistory
 
 app = FastAPI()
 
