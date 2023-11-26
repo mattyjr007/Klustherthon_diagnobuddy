@@ -10,7 +10,7 @@ parent = os.path.dirname(current)
 sys.path.append(parent)
  
 import unittest
-from Model import SessionManager, Model
+from models import SessionManager, Model
 
 class TestModel(unittest.TestCase):
 
