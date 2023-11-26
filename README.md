@@ -1,6 +1,6 @@
 # Klustherthon DiagnoBuddy
 
-This api provides a drug diagnosis response bot system which returns a text based on the users input (health complains).
+This api provides a health diagnosis response bot system which returns a text based on the users input (health complains).
 
 Head over to https://diagnobuddy.azurewebsites.net/docs to use the api interactively from the browser.
 
@@ -12,8 +12,8 @@ To use the API from an api client like postman:
 - Paylod (query parameters)
 ```json
 {
-  "user_input": "What are the side effects of bactrim ?",
-  "session_id": "side_effects, drug_classes"
+  "user_input": "I'm have severe headache and feeling super dizzy",
+  "session_id": "23esasldstst23id"
 }
 ```
 **user_input: str**,This is the user message passed to the LLM
@@ -29,5 +29,5 @@ expected response
 
 
 ### Alternative endpoints
-alternative endpoints langchain with openai's LLM https://diagnobuddy.azurewebsites.net/api/langchainmodel and Facebook llama2 https://diagnobuddy.azurewebsites.net/llama2model were built as alternative for faster response and better result. Currently the endpoint with the best out is the gptmodel endpoint, tho a bit slower compared to llama2. for future developments, users can be refered to any of the endpoints based on their preference.
+alternative endpoints like langchain with openai's LLM https://diagnobuddy.azurewebsites.net/api/langchainmodel and Facebook llama2 https://diagnobuddy.azurewebsites.net/llama2model were built for faster response and better result comparison. Currently the endpoint with the best output is the gptmodel endpoint, tho a bit slower compared to llama2. for future developments, users can be refered to any of the endpoints based on their preference.
 
