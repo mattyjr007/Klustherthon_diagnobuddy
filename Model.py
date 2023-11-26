@@ -1,5 +1,4 @@
 import os
-from fastapi import FastAPI, Depends, HTTPException, status
 from typing import List, Dict
 from openai import OpenAI
 import replicate
