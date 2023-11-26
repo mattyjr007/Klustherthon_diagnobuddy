@@ -1,6 +1,9 @@
 import os
+from fastapi import FastAPI, Depends, HTTPException, status
+from typing import List, Dict
 from openai import OpenAI
 import replicate
+from datetime import datetime, timedelta
 from dotenv.main import load_dotenv
 from langchain.chains import LLMChain
 from langchain.memory import ConversationBufferMemory
@@ -11,6 +14,8 @@ from langchain.prompts import (
     MessagesPlaceholder,
     SystemMessagePromptTemplate,
 )
+
+
 
 load_dotenv()
 
@@ -34,11 +39,11 @@ Maintain a professional and helpful demeanor throughout the conversation. Period
 client = OpenAI(api_key=os.environ['GPT'])
 
 # temporary chat store for openai
-chatshistory = []
-chatshistory.append({
-      "role": "system",
-      "content": instructions
-    })
+# chatshistory = []
+# chatshistory.append({
+#       "role": "system",
+#       "content": instructions
+#     })
 # temporary store for llama2
 messagesDb =  ""
 #-----------------------------------------
@@ -69,8 +74,9 @@ class Model:
     def __init__(self) -> None:
         pass
     #*******OpenAI*******
-    def chatBot(self,msg:str) -> str:
+    def chatBot(self,msg:str,sessions: str) -> str:
 
+        chatshistory = sessions["chatshistory"]
         # store conversation
         chatshistory.append({"role": "user","content": f"{msg}"})
 
@@ -96,10 +102,12 @@ class Model:
             "content": f"{bot_response}"
             })
 
+           
             # send a response
-            return bot_response
+            return bot_response, chatshistory
             # return output for model
-        except:
+        except Exception as e:
+            print("Exceptions caught: ",e)
             # print(response.choices[0].text)
             return "Heyy, i'm facing a little downtime now please try in a few mins"
             
@@ -153,3 +161,28 @@ class Model:
         messagesDb += f"Assistant: {full_response} \n\n"
         
         return full_response
+
+
+
+class SessionManager:
+    def __init__(self) -> None:
+        self.sessions: Dict[str, dict] = {}
+        self.expiry_duration = timedelta(minutes=5)  # Set desired expiry duration
+
+    def get_session(self, session_id: str) -> dict:
+        return self.sessions.setdefault(session_id, {"chatshistory": [{
+                    "role": "system",
+                    "content": instructions
+                    }], "last_activity": datetime.utcnow()})
+
+    def update_last_activity(self, session_id: str):
+        self.sessions[session_id]["last_activity"] = datetime.utcnow()
+
+    def updatesessionchat(self, session_id: str, chat:List):
+        self.sessions[session_id]["chatshistory"] = chat
+
+    def clear_expired_sessions(self):
+        now = datetime.utcnow()
+        expired_sessions = [session_id for session_id, data in self.sessions.items() if now - data["last_activity"] > self.expiry_duration]
+        for session_id in expired_sessions:
+            del self.sessions[session_id]
