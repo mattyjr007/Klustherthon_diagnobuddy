@@ -1,11 +1,12 @@
 import time
 import gunicorn
-from fastapi import FastAPI
+from fastapi import FastAPI,Depends, Request
 from typing import Any
 from pydantic import BaseModel
 import uvicorn
 import os
-from Model import Model
+from Model import Model,SessionManager#, chatshistory
+
 from openai import OpenAI
 # from dotenv.main import load_dotenv
 
@@ -17,6 +18,7 @@ from openai import OpenAI
 app = FastAPI()
 
 model = Model()
+session_manager = SessionManager()
 # #Temporary Store the chat history
 # chatshistory = []
 # chatshistory.append({
@@ -66,16 +68,29 @@ def root():
 
 # Text Model
 @app.post("/api/gpmodel/")
-async def chatModel(user_input:str) -> dict:
+async def chatModel(user_input:str, session_id: str) -> dict:
 
     # pass message to model
     
     try:
-        response_msg = model.chatBot(msg=user_input)
+       # Get or create the session
+        session = session_manager.get_session(session_id)
+
+        # Update last activity time for the session
+        session_manager.update_last_activity(session_id)
+
+        response_msg,chts = model.chatBot(msg=user_input,sessions=session)
+        
+        session_manager.updatesessionchat(session_id=session_id,chat=chts)
+
+        # Clear expired sessions
+        session_manager.clear_expired_sessions()
+        
     except Exception as e:
         print("Exception caught: ", e)
         response_msg = "Heyy!, there seems to be an issue please try again in a few secs!"
 
+    
     # store response in dictionary
     reponse_out = {"AI_out":response_msg}
 
